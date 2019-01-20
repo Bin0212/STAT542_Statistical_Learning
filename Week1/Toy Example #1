@@ -1,0 +1,4 @@
+p = 2;      
+s = 1;      # sd for generating x              
+m1 = c (1,0);
+m0 = c(0,1);
