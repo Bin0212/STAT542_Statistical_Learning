@@ -1,0 +1,98 @@
+---
+title: "Assignment_1_8259_binfeng2"
+output: pdf_document
+---
+```{r}
+#include necessary libraries
+library(ggplot2)
+library(class) 
+
+#set seed to ensure reproducibility
+set.seed(8259)
+```
+
+```{r}
+#create 10 centers for each class
+csize = 10;       # number of centers
+p = 2;      #dimension size
+s = 1;      # sd for generating the centers within each class as well as for x         
+#m0 include 10 center coordinates for class 1, following a normal distribution with 
+#mean=(0, 0) and sd=1; m1 also include 10 center coordinates for class 2, following a normal distribution with mean=(1, 1) and sd=1;
+m0 = matrix(rnorm(csize*p), csize, p)*s + cbind(rep(0,csize), rep(0,csize));
+m1 = matrix(rnorm(csize*p), csize, p)*s + cbind(rep(2,csize), rep(2,csize));
+```
+
+```{r}
+#Generating training data
+n = 100;  # n data for each class
+# Randomly allocate the n samples for class 0  to the 10 clusters
+id0 = sample(1:csize, n, replace = TRUE);
+# Randomly allocate the n samples for class 1 to the 10 clusters
+id1 = sample(1:csize, n, replace = TRUE);  
+
+traindata = matrix(rnorm(2*n*p), 2*n, p)*s + rbind(m0[id0,], m1[id1,]);
+Ytrain = factor(c(rep(0,n), rep(1,n)));
+
+#Generating test data
+N = 5000;  
+# Randomly allocate the N samples for class 0  to the 10 clusters
+id0 = sample(1:csize, N, replace=TRUE);
+# Randomly allocate the n samples for class 1 to the 10 clusters
+id1 = sample(1:csize, N, replace=TRUE); 
+testdata = matrix(rnorm(2*N*p), 2*N, p)*s + rbind(m0[id0,], m1[id1,]);
+Ytest = factor(c(rep(0,N), rep(1,N)));
+
+#Visualizing training data 
+plot(traindata[, 1], traindata[, 2], type = "n", xlab = "", ylab = "")
+
+points(traindata[1:n, 1], traindata[1:n, 2], col = "blue");
+points(traindata[(n+1):(2*n), 1], traindata[(n+1):(2*n), 2], col="red"); 
+
+points(m0[1:csize, 1], m0[1:csize, 2], pch="+", cex=1.5, col="blue");    
+points(m1[1:csize, 1], m1[1:csize, 2], pch="+", cex=1.5, col="red");   
+
+legend("bottomleft", pch = c(1,1), col = c("red", "blue"), 
+       legend = c("class 1", "class 0"))
+
+#Linear regression with cut-off value 0.5
+LR_Model = lm(as.numeric(Ytrain) - 1 ~ traindata)
+Ytrain_pred_LR = as.numeric(LR_Model$fitted > 0.5)
+
+Ytest_pred_LR = LR_Model$coef[1] + LR_Model$coef[2] * testdata[,1] + 
+  LR_Model$coef[3] * testdata[,2]
+Ytest_pred_LR = as.numeric(Ytest_pred_LR > 0.5)
+
+train.err.LR = sum(Ytrain !=  Ytrain_pred_LR) / (2*n);  
+test.err.LR = sum(Ytest !=  Ytest_pred_LR) / (2*N);
+
+#Quadratic regression with cut-off value 0.5
+QR_Model = lm(as.numeric(Ytrain) - 1 ~ traindata[,1] + traindata[,2] + 
+                I(traindata[,1] * traindata[,2]) + I(traindata[,1]^2) + I(traindata[,2]^2))
+Ytrain_pred_QR = as.numeric(QR_Model$fitted > 0.5)
+
+Ytest_pred_QR = QR_Model$coef[1] + QR_Model$coef[2] * testdata[,1] + 
+  QR_Model$coef[3] * testdata[,2] + QR_Model$coef[4] * (testdata[,1] * testdata[,2]) +
+  QR_Model$coef[5] * testdata[,1]^2 + QR_Model$coef[6] * testdata[,2]^2
+Ytest_pred_QR = as.numeric(Ytest_pred_QR > 0.5)
+
+table(Ytrain, Ytrain_pred_QR);
+train.err.QR = sum(Ytrain !=  Ytrain_pred_QR) / (2*n);  
+
+table(Ytest, Ytest_pred_QR); 
+test.err.QR = sum(Ytest !=  Ytest_pred_QR) / (2*N);
+
+#kNN classification with k chosen by 10-fold cross-validation
+
+#Bayes rule
+mixnorm=function(x){
+  ## return the density ratio for a point x, where each 
+  ## density is a mixture of normal with 10 components
+  sum(exp(-apply((t(m0)-x)^2, 2, sum)/2))/sum(exp(-apply((t(m1)-x)^2, 2, sum)/2))
+}
+
+Ytest_pred_Bayes = apply(testdata, 1, mixnorm)
+Ytest_pred_Bayes = as.numeric(Ytest_pred_Bayes < 1);
+table(Ytest, Ytest_pred_Bayes); 
+test.err.Bayes = sum(Ytest !=  Ytest_pred_Bayes) / (2*N)
+```
+
