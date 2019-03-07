@@ -1,0 +1,28 @@
+ [1] "MS_SubClass"    "MS_Zoning"      "Street"         "Alley"          "Lot_Shape"     
+ [6] "Land_Contour"   "Utilities"      "Lot_Config"     "Land_Slope"     "Neighborhood"  
+[11] "Condition_1"    "Condition_2"    "Bldg_Type"      "House_Style"    
+[16] "Roof_Style"     "Roof_Matl"      "Exterior_1st"   "Exterior_2nd"  
+[21] "Mas_Vnr_Type"   "Overall_Cond"     "Exter_Cond"     "Foundation"      
+[26] ""   "Heating"       
+[31] "Central_Air"    "Electrical"      
+[36] "Garage_Type"    ""  
+[41] "Paved_Drive"    "Pool_QC"          "Misc_Feature"   "Sale_Type"     
+
+
+to.numeric
+Overall_Qual
+Exter_Qual
+Bsmt_Qual
+Bsmt_Cond
+Heating_QC
+Kitchen_Qual
+Fireplace_Qu
+Garage_Cond
+Garage_Qual
+Bsmt_Exposure
+BsmtFin_Type_1
+BsmtFin_Type_2
+Functional
+Garage_Finish
+Fence
+Sale_Condition
