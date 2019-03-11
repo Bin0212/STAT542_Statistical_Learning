@@ -30,6 +30,7 @@ DataPrepLASSO = function(train, test){
                    "Bsmt_Unf_SF", "Total_Bsmt_SF", "Second_Flr_SF", 'First_Flr_SF', 
                    "Gr_Liv_Area", "Garage_Area", "Wood_Deck_SF", "Open_Porch_SF", 
                    "Enclosed_Porch", "Three_season_porch", "Screen_Porch", "Misc_Val")
+  
   for(var in winsor.vars){
     # apply winsorization on every numerical variables
     p <- 0.95
