@@ -5,6 +5,7 @@ output: pdf_document
 ---
 
 ```{r}
+# include library
 library(mclust)
 ```
 
@@ -23,10 +24,6 @@ Estep <- function(data, G, para){
                        function(x) t(x - mu[, k]) %*% inv %*% (x - mu[, k])))
   }
   tmp = -tmp/2 + matrix(log(pr), nrow=n, ncol=G, byrow=TRUE)
-# tmp = tmp - apply(tmp, 1, mean)
-# bigM = 15
-# tmp[tmp > bigM] = bigM
-# tmp[tmp < -bigM] = -bigM
   tmp = exp(tmp)
   tmp = tmp / apply(tmp, 1, sum)
   return(tmp)
@@ -35,11 +32,13 @@ Estep <- function(data, G, para){
 Mstep <- function(data, G, para, post.prob){ 
   # Your Code
   # Return the updated parameters
+  # update prob
   prob.new <- apply(post.prob, 2, sum) / nrow(post.prob)
+  # update mean
   mean.new <- sweep(t(data) %*% post.prob, 2, apply(post.prob, 2, sum), '/')
   data = data.matrix(data)
   sigma.new = 0
-
+  # update sigma
   for(i in 1:G){
     tmp = t(sweep(data, 2, mean.new[, i], FUN = '-')) %*% 
       ((sweep(data, 2, mean.new[, i], FUN = '-')) * post.prob[,i]) 
@@ -77,6 +76,11 @@ Rout <- em(modelName = "EEE", data = faithful,
            parameters = ini0)$parameters
 list(Rout$pro, Rout$mean, Rout$variance$Sigma)
 
-# surfacePlot(data=faithful, parameters=Rout, nlevels=10)
-#points(faithful, col="blue")
 ```
+The EM algorithm and its comparison with mclust package are shown above. Note that the results from my EM algorithm and the one from mclust are exactly the same. 
+
+Please find the derivation of the E and M steps in the pdf file. 
+
+
+
+
