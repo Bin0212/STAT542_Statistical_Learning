@@ -1,0 +1,25 @@
+Semi-supervised Learning
+Response to a student's question from CS 598 last semester. 
+
+"We (at my workplace) have been considering the use of semi-supervised learning to classify encrypted network traffic flows, given the availability of vast quantities of unlabeled traffic data and little labeled data. How to combine LDA and EM for semi-supervised learning which you mentioned briefly in a lecture? Any papers/books?"
+
+EM + Discriminant Analysis (LDA/QDA/DA). Basically, you fit a mixture model with EM, but for labeled data, their y_i's are given. So in the E-step, only update the probabilities P(y_i | x) on the unlabeled data. The corresponding probabilities on the labeled data will be either 0 or 1. At the M-step, use all the observations to update the other model parameters. 
+
+Semi-supervised Text Classification with EM. 
+https://www.cs.cmu.edu/~tom/pubs/NigamEtAl-bookChapter.pdf
+https://www.cs.ubc.ca/~schmidtm/Courses/540-W16/EM.pdf
+Google with key words like "semi-supervised learning EM" and "code"
+
+Graph Based Methods. 
+
+Here is the intuition for semi-supervised learning for mixture models. Imagine data are colored as red (y=1), blue (y=0), and gray (unlabeled). Assume data form clusters. In one cluster, suppose we only see red points and gray points (or red points, gray points, and a small portion of blue points), then we can predict the grey points in that cluster to be red.
+
+Such intuition can be carried over to graphs. Present data as a graph with nodes being data points and weights on the edge between node i and node j indicating how similar the two samples are. When weight = 0, then no edge. Here, being similar = they are more likely to have the same label. Again, some nodes are colored as blue and some as red and some as gray (unlabeled data). Then image blue/red colored nodes start to spread their colors to nearby nodes. 
+
+https://scikit-learn.org/stable/modules/label_propagation.html
+
+Co-Training or Transductive SVMs. Google. 
+
+Reviews/Tutorials. 
+[slides] http://pages.cs.wisc.edu/~jerryzhu/pub/sslicml07.pdf
+[survey] http://pages.cs.wisc.edu/~jerryzhu/pub/ssl_survey.pdf
